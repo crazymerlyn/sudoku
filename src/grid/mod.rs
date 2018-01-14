@@ -5,6 +5,7 @@ use termion::style;
 use std::collections::HashSet;
 use std::ops::Index;
 use std::fmt;
+use std::fmt::Write;
 
 pub mod square;
 pub use self::square::Square;
@@ -220,8 +221,9 @@ impl Index<usize> for Grid {
 }
 
 impl fmt::Display for Grid {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, ff: &mut fmt::Formatter) -> fmt::Result {
         let mistakes = self.find_invalid_squares();
+        let mut f = "".to_string();
 
         write!(f, "{}{}", BORDER_COLOR, BORDER_TOP)?;
         write!(f, "{}{}", cursor::Down(1), cursor::Left(37))?;
@@ -230,6 +232,12 @@ impl fmt::Display for Grid {
             for j in 0..9 {
                 let st = if (i, j) == self.current {
                     format!("{}", style::Invert)
+                } else {
+                    String::new()
+                };
+
+                let nt = if (i, j) == self.current {
+                    format!("{}", style::NoInvert)
                 } else {
                     String::new()
                 };
@@ -247,7 +255,7 @@ impl fmt::Display for Grid {
                        st,
                        fg,
                        self.squares[i][j],
-                       style::NoInvert)?;
+                       nt)?;
                 write!(f, "{}", BORDER_COLOR)?;
                 if j % 3 == 2 {
                     write!(f, "{}", BORDER_VERTICAL_THICK)?;
@@ -266,7 +274,7 @@ impl fmt::Display for Grid {
             }
             write!(f, "{}{}", cursor::Down(1), cursor::Left(37))?;
         }
-        Ok(())
+        write!(ff, "{}", f)
     }
 }
 
