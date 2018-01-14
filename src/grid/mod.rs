@@ -13,20 +13,20 @@ pub mod generator;
 
 const BORDER_COLOR: color::Fg<color::Rgb> = color::Fg(color::Rgb(220, 220, 220));
 
-//const BORDER_TOP   : &'static str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
-//const BORDER_BOTTOM: &'static str = "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
-//const BORDER_HORIZONTAL_THIN : &'static str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
-//const BORDER_HORIZONTAL_THICK: &'static str = "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫";
-//const BORDER_VERTICAL_THICK: &'static str = "┃";
-//const BORDER_VERTICAL_THICK: &'static str = "│";
+const BORDER_TOP   : &'static str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
+const BORDER_BOTTOM: &'static str = "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
+const BORDER_HORIZONTAL_THIN : &'static str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
+const BORDER_HORIZONTAL_THICK: &'static str = "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫";
+const BORDER_VERTICAL_THICK: &'static str = "┃";
+const BORDER_VERTICAL_THIN: &'static str = "│";
 
-const BORDER_TOP   : &'static str = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗";
+/*const BORDER_TOP   : &'static str = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗";
 const BORDER_BOTTOM: &'static str = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝";
 const BORDER_HORIZONTAL_THIN : &'static str = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢";
 const BORDER_HORIZONTAL_THICK: &'static str = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣";
 const BORDER_VERTICAL_THICK: &'static str = "║";
 const BORDER_VERTICAL_THIN: &'static str = "│";
-
+*/
 #[derive(Debug, Clone)]
 pub struct Grid {
     squares: [[Square; 9]; 9],
