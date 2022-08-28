@@ -29,7 +29,7 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
         Game {
             grid: Generator::generate("very easy"),
             events: stdin.events(),
-            stdout: stdout,
+            stdout,
         }
     }
 
@@ -57,7 +57,7 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
             write!(self.stdout, "{}Choose a difficulty:", cursor::Goto(left, top - 1)).unwrap();
             
             for (i, diff) in difficulties.iter().enumerate() {
-                if i == current_index % difficulties.len() {
+                if i == current_index {
                     write!(self.stdout, "{}>>", cursor::Goto(left + 2, top + i as u16)).unwrap();
                 }
                 write!(self.stdout, "{}{}", cursor::Goto(left + 5, top + i as u16), diff).unwrap();
@@ -73,9 +73,9 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
                         current_index += 1;
                     }
                     Key::Up | Key::Char('k') | Key::Char('w') => {
-                        current_index = current_index + difficulties.len() - 1;
+                        current_index = if current_index > 0 {current_index - 1} else {difficulties.len() - 1};
                     }
-                    Key::Char('\n') => return Some(difficulties[current_index % difficulties.len()]),
+                    Key::Char('\n') => return Some(difficulties[current_index]),
                     _ => {},
                 }
             }
