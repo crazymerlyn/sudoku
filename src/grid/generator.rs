@@ -11,8 +11,7 @@ const MEDIUM: &'static str = include_str!("./seeds/medium.csv");
 const HARD: &'static str = include_str!("./seeds/hard.csv");
 const FIENDISH: &'static str = include_str!("./seeds/fiendish.csv");
 
-pub struct Generator {
-}
+pub struct Generator {}
 
 impl Generator {
     pub fn generate<T: Into<Difficulty>>(diff: T) -> Grid {
@@ -72,24 +71,24 @@ impl<'a> From<&'a str> for Difficulty {
 }
 
 impl fmt::Display for Difficulty {
-   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-       let str_rep = match *self {
-           Difficulty::VeryEasy => "Very Easy",
-           Difficulty::Easy => "Easy",
-           Difficulty::Medium => "Medium",
-           Difficulty::Hard => "Hard",
-           Difficulty::Fiendish => "Fiendish",
-       };
-       write!(f, "{}", str_rep)
-   }
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let str_rep = match *self {
+            Difficulty::VeryEasy => "Very Easy",
+            Difficulty::Easy => "Easy",
+            Difficulty::Medium => "Medium",
+            Difficulty::Hard => "Hard",
+            Difficulty::Fiendish => "Fiendish",
+        };
+        write!(f, "{}", str_rep)
+    }
 }
 
 fn read_puzzles(puzzles_str: &'static str) -> Vec<Grid> {
     let mut puzzles = vec![];
     let lines: Vec<_> = puzzles_str.lines().collect();
 
-    for i in 0..lines.len()/9 {
-        puzzles.push(Grid::from_csv(lines[i*9..i*9+9].join("\n").as_str()));
+    for i in 0..lines.len() / 9 {
+        puzzles.push(Grid::from_csv(lines[i * 9..i * 9 + 9].join("\n").as_str()));
     }
 
     puzzles

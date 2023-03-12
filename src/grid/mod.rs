@@ -3,9 +3,9 @@ use termion::cursor;
 use termion::style;
 
 use std::collections::HashSet;
-use std::ops::Index;
 use std::fmt;
 use std::fmt::Write;
+use std::ops::Index;
 
 pub mod square;
 pub use self::square::Square;
@@ -14,20 +14,13 @@ pub mod generator;
 
 const BORDER_COLOR: color::Fg<color::Rgb> = color::Fg(color::Rgb(220, 220, 220));
 
-const BORDER_TOP   : &'static str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
+const BORDER_TOP: &'static str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
 const BORDER_BOTTOM: &'static str = "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
-const BORDER_HORIZONTAL_THIN : &'static str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
+const BORDER_HORIZONTAL_THIN: &'static str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
 const BORDER_HORIZONTAL_THICK: &'static str = "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫";
 const BORDER_VERTICAL_THICK: &'static str = "┃";
 const BORDER_VERTICAL_THIN: &'static str = "│";
 
-/*const BORDER_TOP   : &'static str = "╔═══╤═══╤═══╦═══╤═══╤═══╦═══╤═══╤═══╗";
-const BORDER_BOTTOM: &'static str = "╚═══╧═══╧═══╩═══╧═══╧═══╩═══╧═══╧═══╝";
-const BORDER_HORIZONTAL_THIN : &'static str = "╟───┼───┼───╫───┼───┼───╫───┼───┼───╢";
-const BORDER_HORIZONTAL_THICK: &'static str = "╠═══╪═══╪═══╬═══╪═══╪═══╬═══╪═══╪═══╣";
-const BORDER_VERTICAL_THICK: &'static str = "║";
-const BORDER_VERTICAL_THIN: &'static str = "│";
-*/
 #[derive(Debug, Clone)]
 pub struct Grid {
     squares: [[Square; 9]; 9],
@@ -48,7 +41,7 @@ impl Grid {
         }
 
         Grid {
-            squares: squares,
+            squares,
             current: (0, 0),
         }
     }
@@ -105,7 +98,7 @@ impl Grid {
             for j in 0..9 {
                 if !self.squares[i][j].is_empty() {
                     let value = self.squares[i][j].value();
-                    self.squares[i][j] = Square::initial(permutation[(value-1) as usize]);
+                    self.squares[i][j] = Square::initial(permutation[(value - 1) as usize]);
                 }
             }
         }
@@ -250,12 +243,7 @@ impl fmt::Display for Grid {
                     format!("{}", color::Fg(color::White))
                 };
 
-                write!(f,
-                       " {}{}{}{} ",
-                       st,
-                       fg,
-                       self.squares[i][j],
-                       nt)?;
+                write!(f, " {}{}{}{} ", st, fg, self.squares[i][j], nt)?;
                 write!(f, "{}", BORDER_COLOR)?;
                 if j % 3 == 2 {
                     write!(f, "{}", BORDER_VERTICAL_THICK)?;

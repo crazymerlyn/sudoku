@@ -1,12 +1,12 @@
 #![allow(dead_code)]
 
-extern crate termion;
 extern crate rand;
+extern crate termion;
 
+use std::io;
+use termion::input::MouseTerminal;
 use termion::raw::IntoRawMode;
 use termion::screen::AlternateScreen;
-use termion::input::MouseTerminal;
-use std::io;
 
 mod grid;
 
