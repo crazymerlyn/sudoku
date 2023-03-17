@@ -159,8 +159,10 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
                         self.grid.move_cursor(Direction::Down);
                     }
                     Key::Char(' ') | Key::Backspace => self.grid.update_current(0),
+                    Key::Ctrl('r') => self.grid.redo(),
                     Key::Char(ch) => match ch {
                         'q' => return,
+                        'u' => self.grid.undo(),
                         'r' => self.grid.remove_filled(),
                         'n' => {
                             self.run();

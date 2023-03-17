@@ -22,13 +22,108 @@ const BORDER_VERTICAL_THICK: &'static str = "┃";
 const BORDER_VERTICAL_THIN: &'static str = "│";
 
 #[derive(Debug, Clone)]
-pub struct Grid {
+struct GridState {
     squares: [[Square; 9]; 9],
     current: (usize, usize),
 }
 
+#[derive(Debug, Clone)]
+pub struct Grid {
+    state: GridState,
+    past: Vec<GridState>,
+    future: Vec<GridState>,
+}
+
 impl Grid {
-    pub fn new(values: [[u8; 9]; 9]) -> Grid {
+    pub fn new(values: [[u8; 9]; 9]) -> Self {
+        Grid {
+            state: GridState::new(values),
+            past: vec![],
+            future: vec![],
+        }
+    }
+
+    pub fn from_csv(csv: &str) -> Self {
+        Grid {
+            state: GridState::from_csv(csv),
+            past: vec![],
+            future: vec![],
+        }
+    }
+
+    pub fn move_cursor(&mut self, dir: Direction) {
+        self.past.push(self.state.clone());
+        self.state.move_cursor(dir);
+        self.future = vec![];
+    }
+
+    pub fn update_current(&mut self, d: usize) {
+        self.past.push(self.state.clone());
+        self.state.update_current(d);
+        self.future = vec![];
+    }
+
+    pub fn freeze(&mut self) {
+        self.state.freeze();
+    }
+
+    pub fn permute(&mut self, permutation: Vec<u8>) {
+        self.state.permute(permutation);
+    }
+
+    pub fn flip_horizontally(&mut self) {
+        self.state.flip_horizontally();
+    }
+
+    pub fn flip_vertically(&mut self) {
+        self.state.flip_vertically();
+    }
+
+    pub fn row(&self, row: usize) -> Vec<Square> {
+        self.state.row(row)
+    }
+
+    pub fn col(&self, col: usize) -> Vec<Square> {
+        self.state.col(col)
+    }
+
+    pub fn block(&self, y: usize, x: usize) -> Vec<Square> {
+        self.state.block(y, x)
+    }
+
+    pub fn remove_filled(&mut self) {
+        self.past.push(self.state.clone());
+        self.state.remove_filled();
+        self.future = vec![];
+    }
+
+    pub fn undo(&mut self) {
+        if let Some(state) = self.past.pop() {
+            self.future.push(self.state.clone());
+            self.state = state;
+        }
+    }
+
+    pub fn redo(&mut self) {
+        if let Some(state) = self.future.pop() {
+            self.past.push(self.state.clone());
+            self.state = state;
+        }
+    }
+
+    pub fn is_solved(&self) -> bool {
+        self.state.is_solved()
+    }
+
+    /// Check the grid for inaccuracies
+    /// and return the problem square locations
+    pub fn find_invalid_squares(&self) -> HashSet<(usize, usize)> {
+        self.state.find_invalid_squares()
+    }
+}
+
+impl GridState {
+    pub fn new(values: [[u8; 9]; 9]) -> Self {
         let mut squares = [[Square::Empty; 9]; 9];
         for i in 0..9 {
             for j in 0..9 {
@@ -40,13 +135,13 @@ impl Grid {
             }
         }
 
-        Grid {
+        GridState {
             squares,
             current: (0, 0),
         }
     }
 
-    pub fn from_csv(csv: &str) -> Grid {
+    pub fn from_csv(csv: &str) -> Self {
         let mut values = [[0; 9]; 9];
         let mut i = 0;
         let mut j = 0;
@@ -63,7 +158,7 @@ impl Grid {
             }
         }
 
-        Grid::new(values)
+        GridState::new(values)
     }
 
     pub fn move_cursor(&mut self, dir: Direction) {
@@ -209,11 +304,25 @@ impl Index<usize> for Grid {
     type Output = [Square; 9];
 
     fn index(&self, idx: usize) -> &[Square; 9] {
+        self.state.index(idx)
+    }
+}
+
+impl Index<usize> for GridState {
+    type Output = [Square; 9];
+
+    fn index(&self, idx: usize) -> &[Square; 9] {
         &self.squares[idx]
     }
 }
 
 impl fmt::Display for Grid {
+    fn fmt(&self, ff: &mut fmt::Formatter) -> fmt::Result {
+        self.state.fmt(ff)
+    }
+}
+
+impl fmt::Display for GridState {
     fn fmt(&self, ff: &mut fmt::Formatter) -> fmt::Result {
         let mistakes = self.find_invalid_squares();
         let mut f = "".to_string();
