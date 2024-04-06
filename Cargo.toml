@@ -1,7 +1,13 @@
 [package]
 authors = ["CrazyMerlyn <crazy.d.merlyn@gmail.com>"]
-name = "sudoku"
+name = "sudoku-tty"
 version = "0.1.0"
+description = "Play sudoku in terminal"
+
+readme = "README.md"
+license = "MIT"
+categories = ["games", "command-line-utilities"]
+keywords = ["sudoku", "puzzle", "tty", "tui"]
 
 [dependencies]
 rand = "0.3.15"
