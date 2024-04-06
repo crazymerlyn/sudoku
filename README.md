@@ -1,5 +1,7 @@
 # Sudoku
 
+[<img alt="crates.io" src="https://img.shields.io/crates/v/sudoku-tty.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/sudoku-tty)
+
 Play sudoku in terminal
 
 ![Demonstration](./sample.gif)
