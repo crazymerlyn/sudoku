@@ -3,6 +3,7 @@ authors = ["CrazyMerlyn <crazy.d.merlyn@gmail.com>"]
 name = "sudoku-tty"
 version = "0.1.0"
 description = "Play sudoku in terminal"
+repository = "https://github.com/crazymerlyn/sudoku"
 
 readme = "README.md"
 license = "MIT"
