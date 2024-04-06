@@ -1,7 +1,7 @@
 [package]
 authors = ["CrazyMerlyn <crazy.d.merlyn@gmail.com>"]
 name = "sudoku-tty"
-version = "0.1.0"
+version = "0.1.1"
 description = "Play sudoku in terminal"
 repository = "https://github.com/crazymerlyn/sudoku"
 
