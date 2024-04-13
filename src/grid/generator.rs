@@ -5,11 +5,11 @@ use rand::{random, thread_rng, Rng};
 
 use super::Grid;
 
-const VERY_EASY: &'static str = include_str!("./seeds/veasy.csv");
-const EASY: &'static str = include_str!("./seeds/easy.csv");
-const MEDIUM: &'static str = include_str!("./seeds/medium.csv");
-const HARD: &'static str = include_str!("./seeds/hard.csv");
-const FIENDISH: &'static str = include_str!("./seeds/fiendish.csv");
+const VERY_EASY: &str = include_str!("./seeds/veasy.csv");
+const EASY: &str = include_str!("./seeds/easy.csv");
+const MEDIUM: &str = include_str!("./seeds/medium.csv");
+const HARD: &str = include_str!("./seeds/hard.csv");
+const FIENDISH: &str = include_str!("./seeds/fiendish.csv");
 
 pub struct Generator {}
 
@@ -22,7 +22,7 @@ impl Generator {
 
         let mut permutation: Vec<_> = (1..10).collect();
         thread_rng().shuffle(&mut permutation);
-        puzzle.permute(permutation);
+        puzzle.permute(&permutation);
 
         if random() {
             puzzle.flip_horizontally();
@@ -46,8 +46,8 @@ pub enum Difficulty {
 }
 
 impl Difficulty {
-    pub fn puzzles(&self) -> &'static str {
-        match *self {
+    pub fn puzzles(self) -> &'static str {
+        match self {
             Difficulty::VeryEasy => VERY_EASY,
             Difficulty::Easy => EASY,
             Difficulty::Medium => MEDIUM,
@@ -79,7 +79,7 @@ impl fmt::Display for Difficulty {
             Difficulty::Hard => "Hard",
             Difficulty::Fiendish => "Fiendish",
         };
-        write!(f, "{}", str_rep)
+        write!(f, "{str_rep}")
     }
 }
 

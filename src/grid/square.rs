@@ -12,32 +12,26 @@ impl Square {
         if value == 0 {
             Square::Empty
         } else {
-            assert!(value <= 9 as u8);
+            assert!(value <= 9_u8);
             Square::Filled(value)
         }
     }
 
     pub fn initial(value: u8) -> Square {
-        assert!(value > 0 && value <= 9 as u8);
+        assert!(value > 0 && value <= 9_u8);
         Square::Initial(value)
     }
 
-    pub fn is_initial(&self) -> bool {
-        match *self {
-            Square::Initial(_) => true,
-            _ => false,
-        }
+    pub fn is_initial(self) -> bool {
+        matches!(self, Square::Initial(_))
     }
 
-    pub fn is_empty(&self) -> bool {
-        match *self {
-            Square::Empty => true,
-            _ => false,
-        }
+    pub fn is_empty(self) -> bool {
+        matches!(self, Square::Empty)
     }
 
-    pub fn value(&self) -> u8 {
-        match *self {
+    pub fn value(self) -> u8 {
+        match self {
             Square::Initial(value) | Square::Filled(value) => value,
             Square::Empty => 0,
         }
@@ -53,8 +47,7 @@ impl PartialEq for Square {
 impl fmt::Display for Square {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Square::Initial(value) => write!(f, "{}", value),
-            Square::Filled(value) => write!(f, "{}", value),
+            Square::Filled(value) | Square::Initial(value) => write!(f, "{value}"),
             Square::Empty => write!(f, " "),
         }
     }

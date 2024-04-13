@@ -14,12 +14,12 @@ pub mod generator;
 
 const BORDER_COLOR: color::Fg<color::Rgb> = color::Fg(color::Rgb(220, 220, 220));
 
-const BORDER_TOP: &'static str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
-const BORDER_BOTTOM: &'static str = "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
-const BORDER_HORIZONTAL_THIN: &'static str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
-const BORDER_HORIZONTAL_THICK: &'static str = "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫";
-const BORDER_VERTICAL_THICK: &'static str = "┃";
-const BORDER_VERTICAL_THIN: &'static str = "│";
+const BORDER_TOP: &str = "┏━━━┯━━━┯━━━┳━━━┯━━━┯━━━┳━━━┯━━━┯━━━┓";
+const BORDER_BOTTOM: &str = "┗━━━┷━━━┷━━━┻━━━┷━━━┷━━━┻━━━┷━━━┷━━━┛";
+const BORDER_HORIZONTAL_THIN: &str = "┠───┼───┼───╂───┼───┼───╂───┼───┼───┨";
+const BORDER_HORIZONTAL_THICK: &str = "┣━━━┿━━━┿━━━╋━━━┿━━━┿━━━╋━━━┿━━━┿━━━┫";
+const BORDER_VERTICAL_THICK: &str = "┃";
+const BORDER_VERTICAL_THIN: &str = "│";
 
 #[derive(Debug, Clone)]
 struct GridState {
@@ -67,7 +67,7 @@ impl Grid {
         self.state.freeze();
     }
 
-    pub fn permute(&mut self, permutation: Vec<u8>) {
+    pub fn permute(&mut self, permutation: &[u8]) {
         self.state.permute(permutation);
     }
 
@@ -151,7 +151,7 @@ impl GridState {
             } else if c == '\n' {
                 i += 1;
                 j = 0;
-            } else if c.is_digit(10) {
+            } else if c.is_ascii_digit() {
                 values[i][j] = c as u8 - b'0';
             } else {
                 panic!("Unknown character in csv: {}", c);
@@ -185,7 +185,7 @@ impl GridState {
         }
     }
 
-    pub fn permute(&mut self, permutation: Vec<u8>) {
+    pub fn permute(&mut self, permutation: &[u8]) {
         assert_eq!(permutation.len(), 9);
         assert!((1..10).all(|n| permutation.contains(&n)));
 
@@ -214,7 +214,7 @@ impl GridState {
     }
 
     pub fn col(&self, col: usize) -> Vec<Square> {
-        let mut column = vec![];
+        let mut column = Vec::with_capacity(9);
         for i in 0..9 {
             column.push(self.squares[i][col]);
         }
@@ -222,11 +222,11 @@ impl GridState {
     }
 
     pub fn block(&self, y: usize, x: usize) -> Vec<Square> {
-        let mut block = vec![];
+        let mut block = Vec::with_capacity(9);
 
         for i in y * 3..(y + 1) * 3 {
             for j in x * 3..(x + 1) * 3 {
-                block.push(self.squares[i][j])
+                block.push(self.squares[i][j]);
             }
         }
 
@@ -325,12 +325,12 @@ impl fmt::Display for Grid {
 impl fmt::Display for GridState {
     fn fmt(&self, ff: &mut fmt::Formatter) -> fmt::Result {
         let mistakes = self.find_invalid_squares();
-        let mut f = "".to_string();
+        let mut f = String::new();
 
-        write!(f, "{}{}", BORDER_COLOR, BORDER_TOP)?;
+        write!(f, "{BORDER_COLOR}{BORDER_TOP}")?;
         write!(f, "{}{}", cursor::Down(1), cursor::Left(37))?;
         for i in 0..9 {
-            write!(f, "{}{}", BORDER_COLOR, BORDER_VERTICAL_THICK)?;
+            write!(f, "{BORDER_COLOR}{BORDER_VERTICAL_THICK}")?;
             for j in 0..9 {
                 let st = if (i, j) == self.current {
                     format!("{}", style::Invert)
@@ -353,25 +353,25 @@ impl fmt::Display for GridState {
                 };
 
                 write!(f, " {}{}{}{} ", st, fg, self.squares[i][j], nt)?;
-                write!(f, "{}", BORDER_COLOR)?;
+                write!(f, "{BORDER_COLOR}")?;
                 if j % 3 == 2 {
-                    write!(f, "{}", BORDER_VERTICAL_THICK)?;
+                    write!(f, "{BORDER_VERTICAL_THICK}")?;
                 } else {
-                    write!(f, "{}", BORDER_VERTICAL_THIN)?;
+                    write!(f, "{BORDER_VERTICAL_THIN}")?;
                 }
             }
             write!(f, "{}{}", cursor::Down(1), cursor::Left(37))?;
-            write!(f, "{}", BORDER_COLOR)?;
+            write!(f, "{BORDER_COLOR}")?;
             if i == 8 {
-                write!(f, "{}", BORDER_BOTTOM)?;
+                write!(f, "{BORDER_BOTTOM}")?;
             } else if i % 3 == 2 {
-                write!(f, "{}", BORDER_HORIZONTAL_THICK)?;
+                write!(f, "{BORDER_HORIZONTAL_THICK}")?;
             } else {
-                write!(f, "{}", BORDER_HORIZONTAL_THIN)?;
+                write!(f, "{BORDER_HORIZONTAL_THIN}")?;
             }
             write!(f, "{}{}", cursor::Down(1), cursor::Left(37))?;
         }
-        write!(ff, "{}", f)
+        write!(ff, "{f}")
     }
 }
 
@@ -383,6 +383,7 @@ fn next_multiple(a: usize, b: usize) -> usize {
     b + a - (b % a)
 }
 
+#[derive(Copy, Clone)]
 pub enum Direction {
     Right,
     Left,
@@ -391,8 +392,8 @@ pub enum Direction {
 }
 
 impl Direction {
-    pub fn coords(&self) -> (usize, usize) {
-        match *self {
+    pub fn coords(self) -> (usize, usize) {
+        match self {
             Direction::Right => (0, 1),
             Direction::Left => (0, 8),
             Direction::Up => (8, 0),

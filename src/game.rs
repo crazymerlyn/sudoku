@@ -6,7 +6,7 @@ use grid::Grid;
 use termion;
 use termion::clear;
 use termion::cursor;
-use termion::event::*;
+use termion::event::{Event, Key};
 use termion::input::{Events, TermRead};
 use termion::style;
 
@@ -94,11 +94,11 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
 
             if let Event::Key(key) = evt {
                 match key {
-                    Key::Char('q') | Key::Ctrl('c') | Key::Ctrl('d') => return None,
-                    Key::Down | Key::Char('j') | Key::Char('s') => {
+                    Key::Char('q') | Key::Ctrl('c' | 'd') => return None,
+                    Key::Down | Key::Char('j' | 's') => {
                         current_index += 1;
                     }
-                    Key::Up | Key::Char('k') | Key::Char('w') => {
+                    Key::Up | Key::Char('k' | 'w') => {
                         current_index = if current_index > 0 {
                             current_index - 1
                         } else {
@@ -115,11 +115,8 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
     pub fn run(&mut self) {
         self.init();
 
-        let diff = match self.get_difficulty() {
-            Some(val) => val,
-            None => {
-                return;
-            }
+        let Some(diff) = self.get_difficulty() else {
+            return;
         };
 
         self.grid = Generator::generate(diff);
@@ -127,7 +124,7 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
         let (w, h) = termion::terminal_size().unwrap();
         let top = (h - 19) / 2;
         let left = (w - 37) / 2;
-        let mut message = "".to_string();
+        let mut message = String::new();
 
         writeln!(
             self.stdout,
@@ -146,16 +143,16 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
 
             if let Event::Key(key) = evt {
                 match key {
-                    Key::Right | Key::Char('d') | Key::Char('l') => {
+                    Key::Right | Key::Char('d' | 'l') => {
                         self.grid.move_cursor(Direction::Right);
                     }
-                    Key::Left | Key::Char('a') | Key::Char('h') => {
+                    Key::Left | Key::Char('a' | 'h') => {
                         self.grid.move_cursor(Direction::Left);
                     }
-                    Key::Up | Key::Char('w') | Key::Char('k') => {
+                    Key::Up | Key::Char('w' | 'k') => {
                         self.grid.move_cursor(Direction::Up);
                     }
-                    Key::Down | Key::Char('s') | Key::Char('j') => {
+                    Key::Down | Key::Char('s' | 'j') => {
                         self.grid.move_cursor(Direction::Down);
                     }
                     Key::Char(' ') | Key::Backspace => self.grid.update_current(0),
@@ -168,12 +165,12 @@ impl<R: TermRead + Read, W: Write> Game<R, W> {
                             self.run();
                             return;
                         }
-                        ch if ch.is_digit(10) => {
-                            self.grid.update_current(ch as usize - '0' as usize)
+                        ch if ch.is_ascii_digit() => {
+                            self.grid.update_current(ch as usize - '0' as usize);
                         }
                         _ => {}
                     },
-                    Key::Ctrl('c') | Key::Ctrl('d') => break,
+                    Key::Ctrl('c' | 'd') => break,
                     _ => {}
                 };
                 if self.grid.is_solved() {
