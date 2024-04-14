@@ -1,7 +1,7 @@
 [package]
 authors = ["CrazyMerlyn <crazy.d.merlyn@gmail.com>"]
 name = "sudoku-tty"
-version = "0.1.3"
+version = "0.1.4"
 description = "Play sudoku in terminal"
 repository = "https://github.com/crazymerlyn/sudoku"
 
@@ -11,8 +11,8 @@ categories = ["games", "command-line-utilities"]
 keywords = ["sudoku", "puzzle", "tty", "tui"]
 
 [dependencies]
-rand = "0.3.15"
-termion = "1.3.0"
+fastrand = "2.0.2"
+termion = "3.0.0"
 
 [[bin]]
 name = "sudoku"

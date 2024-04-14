@@ -1,8 +1,6 @@
 use std::convert::Into;
 use std::fmt;
 
-use rand::{random, thread_rng, Rng};
-
 use super::Grid;
 
 const VERY_EASY: &str = include_str!("./seeds/veasy.csv");
@@ -18,17 +16,17 @@ impl Generator {
         let puzzles_str = diff.into().puzzles();
         let puzzles = read_puzzles(puzzles_str);
 
-        let mut puzzle = puzzles[random::<usize>() % puzzles.len()].clone();
+        let mut puzzle = puzzles[fastrand::usize(..puzzles.len())].clone();
 
         let mut permutation: Vec<_> = (1..10).collect();
-        thread_rng().shuffle(&mut permutation);
+        fastrand::shuffle(&mut permutation);
         puzzle.permute(&permutation);
 
-        if random() {
+        if fastrand::bool() {
             puzzle.flip_horizontally();
         }
 
-        if random() {
+        if fastrand::bool() {
             puzzle.flip_vertically();
         }
 
